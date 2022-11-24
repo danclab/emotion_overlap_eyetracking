@@ -12,11 +12,6 @@ library("pairwiseComparisons")
 
 #creating a empty  data frame
 
-getwd()
-setwd("C:/Users/salaviza/Projects/Final-Version-Task/v3/data")
-
-getwd()
-
 
 subject_ids <- list("FMS", "LZ","NP", "RA")
 subject_dates <- list("2022.11.17", "2022.10.17","2022.11.22", "2022.11.15")
@@ -27,13 +22,13 @@ for(sub_idx in 1:length(subject_ids)){
   date<-subject_dates[sub_idx]
   
   # Read eyetracking data - skip first 5 lines
-  df<-read.csv(paste0('overlap_',subject,'_',date,'_eyetracking.tsv'),sep='\t',skip=5)
+  df<-read.csv(paste0('../../overlap_',subject,'_',date,'_eyetracking.tsv'),sep='\t',skip=5)
   df<-df[df$TimeStamp!='TimeStamp' & df$TimeStamp!='Session Start',]
   df$ValidityLeft<-as.numeric(df$ValidityLeft)
   df$ValidityRight<-as.numeric(df$ValidityRight)
   
   # Read log file
-  log_df<-read.csv(paste0('overlap_',subject,'_',date,'.tsv'),sep='\t')
+  log_df<-read.csv(paste0('../../overlap_',subject,'_',date,'.tsv'),sep='\t')
   log_df$overall_trial<-log_df$block*4+log_df$trial
   
   
@@ -145,7 +140,7 @@ for(sub_idx in 1:length(subject_ids)){
     
     blk_start<-blk_ends[blk_idx]+1
   }
-  write.csv(subj_df, paste0('overlap_',subject,'_',date,'_eyetracking_processed.csv'))
+  write.csv(subj_df, paste0('../../overlap_',subject,'_',date,'_eyetracking_processed.csv'))
   
   all_data<-rbind(all_data, subj_df)
 }
