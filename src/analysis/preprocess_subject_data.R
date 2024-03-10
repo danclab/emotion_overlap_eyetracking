@@ -32,9 +32,9 @@ for(sub_dir in sub_dirs) {
   
   for(ses_dir in ses_dirs) {
     session<-basename(ses_dir)
-    #if((subject=='sub-227' && session=='ses-01') || (subject!='sub-227' && (session=='ses-01' || session=='ses-02'))) {
+    if((subject=='sub-227' && session=='ses-01') || (subject!='sub-227' && (session=='ses-01' || session=='ses-02'))) {
     #if((subject=='sub-227' && session=='ses-02') || (subject!='sub-227' && (session=='ses-03' || session=='ses-04'))) {
-    if(session=='ses-05' || session=='ses-06') {
+    #if(session=='ses-05' || session=='ses-06') {
         print(session)
     
         eyetracking_dir = paste0(ses_dir,'/eyetracking')
@@ -180,4 +180,4 @@ for(sub_dir in sub_dirs) {
     }
   }
 }
-write.csv(subj_df, paste0(eyetracking_out_dir, '/', '12m_eyetracking_processed.csv'))
+write.csv(subj_df, paste0(deriv_dir, '/', '3m_eyetracking_processed.csv'))
