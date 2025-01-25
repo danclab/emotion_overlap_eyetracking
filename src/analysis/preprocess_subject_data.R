@@ -8,8 +8,12 @@ library("eyetrackingR")
 # #library("ggsignif")
 # library("pairwiseComparisons")
 
+target_age<-'twelve'
+
 data_dir<-'/home/common/bonaiuto/devmobeta/data/'
 deriv_dir<-'/home/common/bonaiuto/devmobeta/derivatives/'
+
+participants<-read.csv(paste0(deriv_dir,'/participants_v2.csv'))
 
 all_data<-data.frame()
 
@@ -32,21 +36,22 @@ for(sub_dir in sub_dirs) {
   
   for(ses_dir in ses_dirs) {
     session<-basename(ses_dir)
-    if((subject=='sub-227' && session=='ses-01') || (subject!='sub-227' && (session=='ses-01' || session=='ses-02'))) {
-    #if((subject=='sub-227' && session=='ses-02') || (subject!='sub-227' && (session=='ses-03' || session=='ses-04'))) {
-    #if(session=='ses-05' || session=='ses-06') {
-        print(session)
+    print(session)
     
-        eyetracking_dir = paste0(ses_dir,'/eyetracking')
-        if(dir.exists(eyetracking_dir)) {
-          eyetracking_out_dir<-paste0(deriv_dir,'/',subject,'/',session,'/eyetracking')
+    eyetracking_dir = paste0(ses_dir,'/eyetracking')
+    if(dir.exists(eyetracking_dir)) {
+      eyetracking_out_dir<-paste0(deriv_dir,'/',subject,'/',session,'/eyetracking')
+      if (!dir.exists(eyetracking_out_dir)) {
           dir.create(eyetracking_out_dir, recursive = TRUE)
+      }
 
-          dir_content <- list.files(eyetracking_dir, full.names = FALSE, recursive = FALSE)
-          eyetracking_fname <- dir_content[grepl("overlap", dir_content) & grepl("eyetracking.tsv", dir_content)]
-          log_fname <- dir_content[grepl("overlap", dir_content) & !grepl("eyetracking.tsv", dir_content)]
+      dir_content <- list.files(eyetracking_dir, full.names = FALSE, recursive = FALSE)
+      eyetracking_fname <- dir_content[grepl("overlap", dir_content) & grepl("eyetracking.tsv", dir_content)]
+      log_fname <- dir_content[grepl("overlap", dir_content) & !grepl("eyetracking.tsv", dir_content)]
 
-          if(length(eyetracking_fname)>0 & length(log_fname)>0) {
+      if(length(eyetracking_fname)>0 & length(log_fname)>0) {
+          age<-participants$age[participants$subject_id==subject & participants$session==session]
+          if(length(age)>0 && age==target_age) {
               # Read eyetracking data - skip first 5 lines
               print(paste0(eyetracking_dir, '/', eyetracking_fname))
               df<-read.csv(paste0(eyetracking_dir, '/', eyetracking_fname),sep='\t',skip=5)
@@ -150,7 +155,7 @@ for(sub_dir in sub_dirs) {
                   block_df$Trial<-(blk_idx-1)*4+block_df$Trial
 
                   # Add face AOI
-                  face_aoi<-data.frame(Left=-0.3, Top=0.7, Right=0.3, Bottom=-0.6)
+                  face_aoi<-data.frame(Left=-0.5, Top=0.76, Right=0.5, Bottom=-0.76)
                   block_df <- add_aoi(block_df, aoi_dataframe = face_aoi, 
                                       x_col = "GazePointX", y_col = "GazePointY", aoi_name = "Face",
                                       x_min_col = "Left", x_max_col = "Right", y_max_col = "Top", 
@@ -180,4 +185,4 @@ for(sub_dir in sub_dirs) {
     }
   }
 }
-write.csv(subj_df, paste0(deriv_dir, '/', '3m_eyetracking_processed.csv'))
+write.csv(all_data, paste0(deriv_dir, '/', target_age, '_eyetracking_processed.csv'))
